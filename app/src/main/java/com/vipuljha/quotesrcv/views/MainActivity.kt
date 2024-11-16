@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -52,7 +53,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupAdapterClickListener() {
         quotesAdapter.setOnItemClickListener {
-            Toast.makeText(this, it.quote, Toast.LENGTH_SHORT).show()
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Quote Details")
+            builder.setMessage(it.quote)
+
+            builder.setPositiveButton(
+                "Ok"
+            ) { dialog, _ -> dialog?.dismiss() }
+
+            builder.show()
         }
     }
 
