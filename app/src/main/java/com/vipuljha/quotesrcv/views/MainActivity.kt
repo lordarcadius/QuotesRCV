@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.vipuljha.quotesrcv.R
 import com.vipuljha.quotesrcv.data.repositories.Repositories
 import com.vipuljha.quotesrcv.databinding.ActivityMainBinding
 import com.vipuljha.quotesrcv.utils.Resource
@@ -35,6 +36,25 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(binding.root)
         applyWindowInsets()
+
+        binding.apply {
+            toolbar.setNavigationOnClickListener {
+                drawerLayout.open()
+            }
+            navigationView.setNavigationItemSelectedListener { menuItem ->
+                menuItem.isChecked = true
+
+                when (menuItem.itemId) {
+                    R.id.nav_menu_home -> showToast("Home")
+                    R.id.nav_menu_explore -> showToast("Explore")
+                    R.id.nav_menu_subscription -> showToast("Subscriptions")
+                    R.id.nav_menu_library -> showToast("Library")
+                    R.id.nav_menu_settings -> showToast("Settings")
+                    R.id.nav_menu_account -> showToast("Account")
+                }
+                return@setNavigationItemSelectedListener true
+            }
+        }
 
         setRecyclerView()
         setupAdapterClickListener()
@@ -84,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                         is Resource.Error -> {
                             toggleProgressBar(false)
                             response.message?.let {
-                                Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
+                                showToast(it)
                             }
                         }
                     }
@@ -100,15 +120,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun applyWindowInsets() {
         // Edge-to-edge layout handling
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Set padding to the root view
             view.updatePadding(
                 left = systemBars.left,
-                top = systemBars.top,
                 right = systemBars.right,
                 bottom = systemBars.bottom
             )
+
+            // Set top padding specifically to the AppBar
+            binding.appBar.setPadding(0, systemBars.top, 0, 0)
             insets
         }
     }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+
 }
